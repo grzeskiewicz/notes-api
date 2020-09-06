@@ -1,12 +1,12 @@
 require('dotenv').config();
 require('./database/Note');
 const mongoose = require('mongoose');
-var express = require('express'),
+const express = require('express'),
     app = express();
-var cors = require('cors');
-var http = require('http').Server(app);
+    const cors = require('cors');
+    const http = require('http').Server(app);
 const { body, validationResult } = require('express-validator/check');
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 const path = require('path');
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -36,7 +36,7 @@ mongoose.connection
 
 app.options('*', cors()) // include before other routes
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     let date = new Date();
     res.send(date);
 
@@ -44,10 +44,10 @@ app.get('/', function(req, res) {
 
 
 app.post('/savenotes', [
-        body('content')
+    body('content')
         .isLength({ min: 1 })
         .withMessage('Please put content'),
-    ],
+],
     (req, res) => {
         const errors = validationResult(req);
         if (errors.isEmpty()) {
@@ -58,7 +58,7 @@ app.post('/savenotes', [
                 i++;
                 const noteM = new Note({ 'content': note, 'date': date });
                 noteM.save()
-                    .then(() => {})
+                    .then(() => { })
                     .catch(() => { res.json({ 'msg': 'Sorry! Something went wrong.' }); });
                 if (notes.length === i) {
                     res.json({ 'msg': 'Saved...' });
@@ -86,19 +86,19 @@ app.get('/getnotes', (req, res) => {
 
 
 app.post('/getnotesdate', [
-        body('date')
+    body('date')
         .isLength({ min: 1 })
         .withMessage('Please put content'),
-    ],
+],
     (req, res) => {
         console.log("HEHEHE");
         const errors = validationResult(req);
         if (errors.isEmpty()) {
             const datebody = req.body.date;
             const dayBeginning = new Date(datebody);
-            const dayEnd=new Date(dayBeginning.getTime()+60 * 60 * 24 * 1000);
+            const dayEnd = new Date(dayBeginning.getTime() + 60 * 60 * 24 * 1000);
             Note.find()
-            .where('date').gt(dayBeginning).lt(dayEnd)
+                .where('date').gt(dayBeginning).lt(dayEnd)
                 .then((notes) => {
                     res.json(notes)
                     console.log(notes);
@@ -112,13 +112,6 @@ app.post('/getnotesdate', [
 );
 
 
-
-/*
-var port = process.env.PORT || 8080,
-    ip = process.env.IP || '0.0.0.0';
-
-http.listen(port, ip);
-console.log('Server running on http://%s:%s', ip, port);*/
 const server = app.listen(3005, () => {
     console.log(`Express is running on port ${server.address().port}`);
 });
